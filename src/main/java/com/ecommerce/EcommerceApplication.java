@@ -10,14 +10,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import com.abscence.entities.Cours;
-import com.abscence.entities.Role;
-import com.abscence.entities.Sceance;
-import com.abscence.entities.Utilisateur;
+
 import com.ecommerce.dao.CategoryRepository;
 import com.ecommerce.dao.ProductRepository;
+import com.ecommerce.dao.UtilisateurRepository;
 import com.ecommerce.entities.Category;
 import com.ecommerce.entities.Product;
+import com.ecommerce.service.AccountService;
 
 import net.bytebuddy.utility.RandomString;
 import com.ecommerce.entities.*;
@@ -26,10 +25,13 @@ public class EcommerceApplication implements CommandLineRunner {
 
 	@Autowired
 	private ProductRepository productRepository;
+	@Autowired
+	private UtilisateurRepository utilisateurRepository;
 	
 	@Autowired
 	private CategoryRepository categoryRepository;
-	
+	@Autowired
+	 AccountService accountService;
 	@Autowired
 	private RepositoryRestConfiguration repositoryRestConfiguration;
 	@Autowired
@@ -51,12 +53,20 @@ public BCryptPasswordEncoder bCryptPasswordEncoder(){
 		repositoryRestConfiguration.exposeIdsFor(Role.class);
 	
 		
+	
+
 		//add roles
-		accountService.saveRole(new Role(1L,"Prof",null));
-		accountService.saveRole(new Role(2L,"Etudiant",null));
-		accountService.saveRole(new Role(3L,"Admin",null));
-		Cours c = new Cours(1L,"gpmc",null,null);
-		
+				accountService.saveRole(new Role(1L,"Admin",null));
+				accountService.saveRole(new Role(2L,"Publisher",null));
+				accountService.saveRole(new Role(3L,"User",null));
+			
+				Utilisateur admin = new Utilisateur();
+				admin.setPassword(bCryptPasswordEncoder.encode("1234"));
+				admin.setEmail("admin@hotmail.com");
+				admin.setName("admin");
+
+				utilisateurRepository.save(admin);
+				accountService.addRoleToUser(admin.getEmail(), "Admin");
 		
 		categoryRepository.save(new Category(null,"computers",null,null,null));
 		categoryRepository.save(new Category(null,"printers",null,null,null));

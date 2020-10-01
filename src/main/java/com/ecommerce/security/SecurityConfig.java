@@ -12,6 +12,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
@@ -31,16 +33,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	}
 	@Override
     protected void configure(HttpSecurity http) throws Exception{
-    http.csrf().disable();
-    http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
- // http.formLogin();
-   http.authorizeRequests().antMatchers("/login/**").permitAll();
-  http.authorizeRequests().antMatchers(HttpMethod.POST,"/register/**").hasAuthority("Admin");
-    http.authorizeRequests().anyRequest().authenticated();
-    
-    http.addFilter(new JwtAuthenticationFilter(authenticationManager()));
-    http.addFilterBefore(new JWTAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
-  
+		  http.csrf().disable();
+		    http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+		 // http.formLogin();
+		   http.authorizeRequests().antMatchers("/login/**").permitAll();
+		   http.authorizeRequests().antMatchers("/register/**").permitAll();
+		   http.authorizeRequests().antMatchers("/h2-console/**").permitAll();
+		
+		    http.authorizeRequests().anyRequest().authenticated();
+		    
+		    http.addFilter(new JwtAuthenticationFilter(authenticationManager()));
+		    http.addFilterBefore(new JWTAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+		    http.headers().frameOptions().disable();
+
 
      
     }
